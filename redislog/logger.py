@@ -3,22 +3,29 @@ import getpass
 import datetime
 import inspect
 import logging
+from redislog import handlers
+def configure():
+    log = RedisLogger('my.logger')
+    log.addHandler(handlers.RedisHandler.to("logging:test", host='10.211.55.12',port=6379, password='ZuPEFJCwKxJ7nHG', level="DEBUG"))
+    return log
+
 
 def levelAsString(level):
     return {logging.DEBUG: 'debug',
             logging.INFO: 'info',
-            logging.WARNING: 'warning', 
-            logging.ERROR: 'error', 
-            logging.CRITICAL: 'critical', 
+            logging.WARNING: 'warning',
+            logging.ERROR: 'error',
+            logging.CRITICAL: 'critical',
             logging.FATAL: 'fatal'}.get(level, 'unknown')
+
 
 def _getCallingContext():
     """
     Utility function for the RedisLogRecord.
 
-    Returns the module, function, and lineno of the function 
-    that called the logger.  
- 
+    Returns the module, function, and lineno of the function
+    that called the logger.
+
     We look way up in the stack.  The stack at this point is:
     [0] logger.py _getCallingContext (hey, that's me!)
     [1] logger.py __init__
@@ -41,7 +48,7 @@ def _getCallingContext():
         funcname = context[3]
     else:
         funcname = ""
-        
+
     # python docs say you don't want references to
     # frames lying around.  Bad things can happen.
     del context
@@ -51,8 +58,10 @@ def _getCallingContext():
 
 
 class RedisLogRecord(logging.LogRecord):
-    def __init__(self, name, lvl, fn, lno, msg, args, exc_info, func=None, extra=None):
-        logging.LogRecord.__init__(self, name, lvl, fn, lno, msg, args, exc_info, func)
+
+    def __init__(self, name, lvl, fn, lno, msg, args, exc_info, func=None, **extra):
+        logging.LogRecord.__init__(
+            self, name, lvl, fn, lno, msg, args, exc_info, func=None, **extra)
 
         # You can also access the following instance variables via the
         # formatter as
@@ -72,23 +81,25 @@ class RedisLogRecord(logging.LogRecord):
             'msg': str(msg),
             'args': list(args),
             'time': datetime.datetime.utcnow(),
-            'username': self.username,
             'funcname': self.funcname,
+            'username': self.username,
             'hostname': self.hostname,
             'traceback': exc_info
         }
+        self._raw.update(extra)
+
 
 class RedisLogger(logging.getLoggerClass()):
-    def makeRecord(self, name, lvl, fn, lno, msg, args, exc_info, func=None, extra=None):
-        record = RedisLogRecord(name, lvl, fn, lno, msg, args, exc_info, func=None)
 
+    def makeRecord(self, name, lvl, fn, lno, msg, arg, exc_info, *args, **extra):
+
+        record = RedisLogRecord(name, lvl, fn, lno, msg, arg,
+                                exc_info, args, **extra)
         if extra:
             for key in extra:
                 if (key in ["message", "asctime"]) or (key in record.__dict__):
-                    raise KeyError("Attempt to overwrite %r in RedisLogRecord" % key)
+                    raise KeyError(
+                        "Attempt to overwrite %r in RedisLogRecord" % key)
                 record.__dict__[key] = extra[key]
+        # print(record)
         return record
-
-
-
-

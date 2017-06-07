@@ -16,7 +16,7 @@ __author__ = 'Jed Parsons <jed@jedparsons.com>'
 __version__ = (0, 0, 1)
 
 import logging
-import logger
+from redislog import logger
 
 logging.setLoggerClass(logger.RedisLogger)
 

@@ -4,6 +4,7 @@ import simplejson as json
 
 
 class RedisFormatter(logging.Formatter):
+
     def format(self, record):
         """
         JSON-encode a record for serializing through redis.
@@ -18,7 +19,7 @@ class RedisFormatter(logging.Formatter):
         # stringify exception data
         if data.get('traceback'):
             data['traceback'] = self.formatException(data['traceback'])
-
+        # print(data)
         return json.dumps(data)
 
 
@@ -31,8 +32,8 @@ class RedisHandler(logging.Handler):
     """
 
     @classmethod
-    def to(cklass, channel, host='localhost', port=6379, password=None, level=logging.NOTSET):
-        return cklass(channel, redis.Redis(host=host, port=port, password=password), level=level)
+    def to(cklass, channel, host='localhost', port=6379, password=None, db=0, level=logging.NOTSET):
+        return cklass(channel, redis.Redis(host=host, port=port, password=password, db=db), level=level)
 
     def __init__(self, channel, redis_client, level=logging.NOTSET):
         """
@@ -49,7 +50,8 @@ class RedisHandler(logging.Handler):
         """
         try:
             self.redis_client.publish(self.channel, self.format(record))
-        except redis.RedisError:
+        except redis.RedisError as e:
+            print(e)
             pass
 
 
