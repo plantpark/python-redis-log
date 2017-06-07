@@ -6,7 +6,7 @@ import logging
 from redislog import handlers
 def configure():
     log = RedisLogger('my.logger')
-    log.addHandler(handlers.RedisHandler.to("logging:test", host='10.211.55.12',port=6379, password='ZuPEFJCwKxJ7nHG', level="DEBUG"))
+    log.addHandler(handlers.RedisHandler.to("logging:test", host='localhost',port=port, password='password', level="DEBUG"))
     return log
 
 

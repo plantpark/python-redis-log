@@ -6,20 +6,23 @@ A logging handler for Python that publishes log messages using redis's
 pub/sub system.  You can use this to read or respond to streaming log
 data in real time.
 
+Configure
+------------
+
+>>>logger.py
+>>>def configure():
+>>>    log = RedisLogger('my.logger')
+>>>    log.addHandler(handlers.RedisHandler.to("logging:test", host='localhost',port=port, password='password', level="DEBUG"))
+>>>    return log
+
+
 Installation
 ------------
 
-The current stable release ::
-
-    pip install python-redis-log
-
-or ::
-
-    easy_install python-redis-log
 
 The latest from github_ ::
 
-    git clone git://github.com/jedp/python-redis-log.git
+    git clone git://github.com/plantpark/python-redis-log.git
     cd python-redis-log
     python setup.py build
     python setup.py install --prefix=$HOME  # for example
@@ -37,14 +40,16 @@ Requirements
 .. _Python redis client: https://github.com/andymccurdy/redis-py
 .. _simplejson: https://github.com/simplejson/simplejson
 
+
+
+
 Usage
 -----
 
 ::
 
     >>> from redislog import handlers, logger
-    >>> l = logger.RedisLogger('my.logger')
-    >>> l.addHandler(handlers.RedisHandler.to("my:channel", host='localhost', port=6379, password='foobie'))
+    >>> l = logger.configure()
     >>> l.info("I like pie")
     >>> l.error("Trousers!", exc_info=True)
 
