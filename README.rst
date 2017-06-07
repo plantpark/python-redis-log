@@ -8,7 +8,7 @@ data in real time.
 
 Configure
 ------------
-
+::
     >>>logger.py
     >>>def configure():
     >>>    log = RedisLogger('my.logger')
