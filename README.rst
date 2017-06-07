@@ -29,7 +29,7 @@ The latest from github_ ::
     python setup.py build
     python setup.py install --prefix=$HOME  # for example
 
-.. _github: https://github.com/jedp/python-redis-log
+.. _github: https://github.com/plantpark/python-redis-log
     
 Requirements
 ------------
