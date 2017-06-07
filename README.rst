@@ -8,12 +8,14 @@ data in real time.
 
 Configure
 ------------
+
 ::
-    >>>logger.py
-    >>>def configure():
-    >>>    log = RedisLogger('my.logger')
-    >>>    log.addHandler(handlers.RedisHandler.to("logging:test", host='localhost',port=port, password='password', level="DEBUG"))
-    >>>    return log
+
+    >>> logger.py
+    >>> def configure():
+    >>>     log = RedisLogger('my.logger')
+    >>>     log.addHandler(handlers.RedisHandler.to("logging:test", host='localhost',port=port, password='password', level="DEBUG"))
+    >>>     return log
 
 
 Installation
